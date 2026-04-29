@@ -1,0 +1,44 @@
+name: Update Formula
+
+on:
+  schedule:
+    - cron: "0 8 * * 1" # every Monday at 08:00 UTC
+  workflow_dispatch: # allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest version
+        id: version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          latest="$(gh api repos/SonarSource/sonarqube-cli/releases/latest --jq '.tag_name')"
+          current="$(grep -m1 'version "' Formula/sonar.rb | sed 's/.*version "//;s/"//')"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "Current: $current"
+          echo "Latest:  $latest"
+
+      - name: Update formula
+        if: steps.version.outputs.latest != steps.version.outputs.current
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x scripts/update-formula.sh
+          ./scripts/update-formula.sh
+
+      - name: Commit and push
+        if: steps.version.outputs.latest != steps.version.outputs.current
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/sonar.rb
+          git commit -m "Update sonar to ${{ steps.version.outputs.latest }}"
+          git push
