@@ -1,7 +1,7 @@
 class Sonar < Formula
   desc "CLI tool for SonarQube"
   homepage "https://github.com/SonarSource/sonarqube-cli"
-  version "0.14.1.2338"
+  version "1.0.0.2628"
   license "LGPL-3.0-only"
 
   on_macos do
