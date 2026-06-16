@@ -29,24 +29,9 @@ get_current_version() {
   grep -m1 'version "' "$FORMULA" | sed 's/.*version "//;s/"//'
 }
 
-# Artifact extensions to try, in order of preference. SonarSource switched the
-# CDN artifact suffix from .exe to .bin starting with the 0.14.x/1.0.x releases;
-# .exe is kept as a fallback for older versions.
-EXTENSIONS=("bin" "exe")
-
-# Resolves the artifact extension that actually exists for a given URL stem,
-# echoing it on success. Returns non-zero if none of the candidates exist.
-resolve_extension() {
-  local stem="$1"
-  local ext
-  for ext in "${EXTENSIONS[@]}"; do
-    if curl -fsSL -o /dev/null "$stem.$ext" 2>/dev/null; then
-      echo "$ext"
-      return 0
-    fi
-  done
-  return 1
-}
+# CDN artifact suffix. SonarSource switched from .exe to .bin with the
+# 0.14.x/1.0.x releases, and the script only ever fetches the latest release.
+EXTENSION="bin"
 
 compute_sha256() {
   local url="$1"
@@ -77,23 +62,14 @@ main() {
   echo "Updating formula to $latest..."
 
   declare -A checksums
-  declare -A extensions
   for entry in "${PLATFORMS[@]}"; do
     local platform="${entry%%:*}"
     local os="${entry##*:}"
-    local stem="$BASE_URL/$latest/$os/sonarqube-cli-$latest-$platform"
+    local url="$BASE_URL/$latest/$os/sonarqube-cli-$latest-$platform.$EXTENSION"
 
-    echo "  Resolving $platform artifact..."
-    local ext
-    if ! ext="$(resolve_extension "$stem")"; then
-      echo "Error: no artifact found for $platform (tried: ${EXTENSIONS[*]})" >&2
-      exit 1
-    fi
-    extensions["$platform"]="$ext"
-
-    echo "  Downloading $platform ($ext)..."
+    echo "  Downloading $platform..."
     local sha
-    sha="$(compute_sha256 "$stem.$ext")"
+    sha="$(compute_sha256 "$url")"
     checksums["$platform"]="$sha"
     echo "    SHA256: $sha"
   done
@@ -101,15 +77,13 @@ main() {
   # Update version
   sed -i.bak "s/version \"$current\"/version \"$latest\"/" "$FORMULA"
 
-  # Update the artifact extension and checksum for each platform
+  # Update checksums — find the sha256 line following the URL for each platform
   for entry in "${PLATFORMS[@]}"; do
     local platform="${entry%%:*}"
     local sha="${checksums[$platform]}"
-    local ext="${extensions[$platform]}"
-    # Match the url line for this platform, fix its extension, then update the
-    # sha256 on the following line.
+    # Match the url line containing this platform, then update the sha256 on the next line
     perl -i -pe "
-      if (/\Q$platform\E\.(bin|exe)/) { s/\Q$platform\E\.(bin|exe)/$platform.$ext/; \$found = 1; next }
+      if (/\Q$platform\E\.$EXTENSION/) { \$found = 1; next }
       if (\$found && /sha256/) { s/sha256 \"[^\"]*\"/sha256 \"$sha\"/; \$found = 0 }
     " "$FORMULA"
   done
