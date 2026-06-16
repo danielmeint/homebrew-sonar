@@ -6,20 +6,20 @@ class Sonar < Formula
 
   on_macos do
     on_arm do
-      url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/macos/sonarqube-cli-#{version}-macos-arm64.exe"
-      sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/macos/sonarqube-cli-#{version}-macos-arm64.bin"
+      sha256 "a90dd97e5c0b88723a18933d049ac9c80e11bde099026b32c19c1b298f8ffe3d"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/linux/sonarqube-cli-#{version}-linux-x86-64.exe"
-      sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/linux/sonarqube-cli-#{version}-linux-x86-64.bin"
+      sha256 "37494e1a2ba294cc628e1a5c30a17ee05cf3f7c0895310e026497365534bc2bc"
     end
 
     on_arm do
-      url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/linux/sonarqube-cli-#{version}-linux-arm64.exe"
-      sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/linux/sonarqube-cli-#{version}-linux-arm64.bin"
+      sha256 "c88177a22d5ea4f946fcd5665975584a526aefe83d9fa05363f99cbcea76287d"
     end
   end
 
