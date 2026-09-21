@@ -1,25 +1,25 @@
 class Sonar < Formula
   desc "CLI tool for SonarQube"
   homepage "https://github.com/SonarSource/sonarqube-cli"
-  version "1.7.0.4638"
+  version "1.8.0.5274"
   license "LGPL-3.0-only"
 
   on_macos do
     on_arm do
       url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/macos/sonarqube-cli-#{version}-macos-arm64.bin"
-      sha256 "8a4611b2899dafeef2be6c2d820b3d2c004a02acd012bf7b0f1fd08ca9193659"
+      sha256 "ba4fb2ea8e98742db361162ec8454239d5d62c8cba8a6c41304cadb7f2151560"
     end
   end
 
   on_linux do
     on_intel do
       url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/linux/sonarqube-cli-#{version}-linux-x86-64.bin"
-      sha256 "42b9dd631120b8776cd63daafd18db8e2d1229fdcde2a3ce6ef258580eb63a8c"
+      sha256 "fbfd39b3798d7c11a1c5c81377351f82ba8ae6be65335243f0bb3c91e7a921d1"
     end
 
     on_arm do
       url "https://binaries.sonarsource.com/Distribution/sonarqube-cli/#{version}/linux/sonarqube-cli-#{version}-linux-arm64.bin"
-      sha256 "f4a69cc7f9c1312567572f674e4343094e6325e1c142d05d3e491482d8979329"
+      sha256 "532e71e48b910c58741f9118cde845854c1e4a821ed0f50e1502f06cda3c9bb5"
     end
   end
 
